@@ -3,35 +3,32 @@ package ru.example.rest.bean;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractRequest implements Serializable {
-	
+
 	@XmlElement(name = "request-type")
 	protected String requestType;
 
-	@XmlElementRef(name = "extra")
-	protected List<StringExtra> extras;
-	
+	@XmlElement(name = "extra")
+	private List<Extra> properties;
+
 	public AbstractRequest() {
-		this.extras = new ArrayList<>();
-		this.extras.add(new StringExtra("login"));
-		this.extras.add(new StringExtra("password"));
+		properties = new ArrayList<>();
 	}
 
 	public void setLogin(String login) {
-		StringExtra loginExtra = extras.get(0);
-		loginExtra.setValue(login);
+		properties.add(new Extra(ExtraName.LOGIN.getName(), login));
 	}
 
 	public void setPassword(String password) {
-		StringExtra passwordExtra = extras.get(1);
-		passwordExtra.setValue(password);
+		properties.add(new Extra(ExtraName.PASSWORD.getName(), password));
 	}
 
 	public String getRequestType() {
@@ -39,13 +36,16 @@ public abstract class AbstractRequest implements Serializable {
 	}
 
 	public String getLogin() {
-		StringExtra loginExtra = extras.get(0);
-		return loginExtra.getValue();
+		return getValue(ExtraName.LOGIN.getName());
 	}
 
 	public String getPassword() {
-		StringExtra passwordExtra = extras.get(1);
-		return passwordExtra.getValue();
+		return getValue(ExtraName.PASSWORD.getName());
+	}
+	
+	private String getValue(@NotNull String name) {
+		Optional<Extra> optional = properties.stream().filter((Extra extra) -> name.equalsIgnoreCase(extra.key)).findFirst();
+		return optional.isPresent() ? optional.get().value : null;
 	}
 
 }

@@ -9,6 +9,7 @@
 		<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/postgres</property>
 		<property name="hibernate.connection.username">service_test</property>
 		<property name="hibernate.connection.password">1</property>
+        <property name="hibernate.connection.autocommit">false</property>
 		<property name="hibernate.current_session_context_class">thread</property>
 	</session-factory>
 </hibernate-configuration>
